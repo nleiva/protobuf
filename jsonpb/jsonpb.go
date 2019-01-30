@@ -73,6 +73,9 @@ type Marshaler struct {
 	// elements.
 	Indent string
 
+	// Whether to render int64/uint64 as strings or not?
+	EmitUInt64Unquoted bool
+
 	// Whether to use the original (.proto) name for fields.
 	OrigName bool
 
@@ -633,7 +636,7 @@ func (m *Marshaler) marshalValue(out *errWriter, prop *proto.Properties, v refle
 	if err != nil {
 		return err
 	}
-	needToQuote := string(b[0]) != `"` && (v.Kind() == reflect.Int64 || v.Kind() == reflect.Uint64)
+	needToQuote := !m.EmitUInt64Unquoted && string(b[0]) != `"` && (v.Kind() == reflect.Int64 || v.Kind() == reflect.Uint64)
 	if needToQuote {
 		out.write(`"`)
 	}
